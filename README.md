@@ -100,27 +100,27 @@ Simply double-click `run_enhanced_tracker.bat` to launch the application.
 ## Screenshots
 
 ### Main Application Interface
-![Main Interface](screenshots/image1.png)
+![Main Interface](screenshots/main_interface.png)
 *The main application window showing the comprehensive task management interface with plan overview, progress tracking, and task list.*
 
 ### Calendar Date Picker
-![Calendar Picker](screenshots/image2.png)
+![Calendar Picker](screenshots/calendar_picker.png)
 *Interactive date picker dialog for setting your plan start date.*
 
 ### Navigation & Filtering Panel
-![Navigation & Filters](screenshots/image3.png)
+![Navigation & Filters](screenshots/navigation_filters.png)
 *Left panel showing task categories, status filters, and search functionality.*
 
 ### Task Action Buttons
-![Task Actions](screenshots/image4.png)
+![Task Actions](screenshots/task_actions.png)
 *Action buttons for managing task status: Mark Complete, Mark In Progress, Add Notes, and Toggle Status.*
 
 ### Task Notes Dialog
-![Add Notes](screenshots/image5.png)
+![Add Notes](screenshots/add_notes_dialog.png)
 *Dialog for adding detailed notes to specific tasks.*
 
 ### Plan Overview Section
-![Plan Overview](screenshots/image6.png)
+![Plan Overview](screenshots/plan_overview.png)
 *Top section showing plan details including start date, duration, end date, and current progress.*
 
 ## Technical Details
