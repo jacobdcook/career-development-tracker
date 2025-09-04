@@ -108,6 +108,7 @@ dmypy.json
 !sample_schedule_template.json
 !schedule_generator_guide.md
 !github_activity_template.md
+!screenshots/
 backups/
 plan_data.json
 enhanced_plan_state.json
