@@ -1,0 +1,18 @@
+# Enhanced Cybersecurity Job Search Plan Tracker
+# No external dependencies required - uses only Python standard library
+# Python 3.7+ recommended
+
+# Standard library modules used:
+# - tkinter (GUI framework)
+# - datetime (date/time handling)
+# - json (data serialization)
+# - os (file system operations)
+# - dataclasses (data structures)
+# - enum (enumerations)
+# - webbrowser (web integration)
+# - typing (type hints)
+
+# Optional: For enhanced functionality (uncomment if needed)
+# colorama>=0.4.4  # For colored terminal output
+# rich>=12.0.0     # For beautiful terminal formatting
+# click>=8.0.0     # For better CLI interface

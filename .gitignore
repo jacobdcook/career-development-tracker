@@ -125,6 +125,12 @@ user_data.json
 *.swo
 *~
 
+# Releases (keep structure but ignore build artifacts)
+releases/*/build/
+releases/*/dist/
+releases/*/__pycache__/
+releases/*/*.pyc
+
 # OS
 .DS_Store
 .DS_Store?

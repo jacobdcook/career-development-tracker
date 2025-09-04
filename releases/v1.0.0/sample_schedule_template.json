@@ -1,0 +1,296 @@
+{
+  "start_date": "YYYY-MM-DD",
+  "end_date": "YYYY-MM-DD", 
+  "hours_per_day_target": 4.0,
+  "tasks": [
+    {
+      "id": 100,
+      "title": "Update resume and portfolio materials",
+      "hours": 1.5,
+      "day": 1,
+      "done": false,
+      "created_order": 100
+    },
+    {
+      "id": 101,
+      "title": "Document today's progress on GitHub",
+      "hours": 0.5,
+      "day": 1,
+      "done": false,
+      "created_order": 101
+    },
+    {
+      "id": 102,
+      "title": "Research target companies and opportunities",
+      "hours": 1.5,
+      "day": 1,
+      "done": false,
+      "created_order": 102
+    },
+    {
+      "id": 103,
+      "title": "Study: Core concepts and practice exercises",
+      "hours": 1.0,
+      "day": 1,
+      "done": false,
+      "created_order": 103
+    },
+    {
+      "id": 104,
+      "title": "Commit progress notes and update GitHub portfolio",
+      "hours": 0.5,
+      "day": 1,
+      "done": false,
+      "created_order": 104
+    },
+    {
+      "id": 105,
+      "title": "Apply to opportunities (tailor applications, track progress)",
+      "hours": 2.0,
+      "day": 2,
+      "done": false,
+      "created_order": 105
+    },
+    {
+      "id": 106,
+      "title": "Security+: Domain 1 (threats/attacks/vulns)",
+      "hours": 2.0,
+      "day": 2,
+      "done": false,
+      "created_order": 106
+    },
+    {
+      "id": 107,
+      "title": "Lab: TryHackMe Intro or SOC fundamentals",
+      "hours": 1.5,
+      "day": 2,
+      "done": false,
+      "created_order": 107
+    },
+    {
+      "id": 108,
+      "title": "Document TryHackMe lab on GitHub with screenshots",
+      "hours": 0.5,
+      "day": 2,
+      "done": false,
+      "created_order": 108
+    },
+    {
+      "id": 109,
+      "title": "Connect with 5 recruiters on LinkedIn",
+      "hours": 0.5,
+      "day": 2,
+      "done": false,
+      "created_order": 109
+    },
+    {
+      "id": 110,
+      "title": "Security+: Domain 2 (architecture/design)",
+      "hours": 2.0,
+      "day": 3,
+      "done": false,
+      "created_order": 110
+    },
+    {
+      "id": 111,
+      "title": "Lab: networking review + ports flashcards",
+      "hours": 1.0,
+      "day": 3,
+      "done": false,
+      "created_order": 111
+    },
+    {
+      "id": 112,
+      "title": "Apply to 8 jobs (Davis/Sacramento focus)",
+      "hours": 2.0,
+      "day": 3,
+      "done": false,
+      "created_order": 112
+    },
+    {
+      "id": 113,
+      "title": "Update GitHub README with networking lab progress",
+      "hours": 0.5,
+      "day": 3,
+      "done": false,
+      "created_order": 113
+    },
+    {
+      "id": 114,
+      "title": "Draft LinkedIn post about your journey",
+      "hours": 0.5,
+      "day": 3,
+      "done": false,
+      "created_order": 114
+    },
+    {
+      "id": 115,
+      "title": "Read 1 security blog post",
+      "hours": 0.5,
+      "day": 3,
+      "done": false,
+      "created_order": 115
+    },
+    {
+      "id": 116,
+      "title": "Lab: SIEM/log analysis intro (Splunk/training)",
+      "hours": 2.0,
+      "day": 4,
+      "done": false,
+      "created_order": 116
+    },
+    {
+      "id": 117,
+      "title": "Apply to 10 jobs (SOC/GRC keywords)",
+      "hours": 2.0,
+      "day": 4,
+      "done": false,
+      "created_order": 117
+    },
+    {
+      "id": 118,
+      "title": "Security+: Domain 3 (implementation)",
+      "hours": 1.5,
+      "day": 4,
+      "done": false,
+      "created_order": 118
+    },
+    {
+      "id": 119,
+      "title": "Create GitHub repository for SIEM lab documentation",
+      "hours": 0.5,
+      "day": 4,
+      "done": false,
+      "created_order": 119
+    },
+    {
+      "id": 120,
+      "title": "Reach out to 3 alumni/pros for chats",
+      "hours": 0.5,
+      "day": 4,
+      "done": false,
+      "created_order": 120
+    },
+    {
+      "id": 121,
+      "title": "Security+: review Domains 1–3 key terms",
+      "hours": 1.5,
+      "day": 5,
+      "done": false,
+      "created_order": 121
+    },
+    {
+      "id": 122,
+      "title": "Apply to 10 jobs (Bay Area + remote)",
+      "hours": 2.0,
+      "day": 5,
+      "done": false,
+      "created_order": 122
+    },
+    {
+      "id": 123,
+      "title": "Build/apply tracker (CSV/Sheet) & backfill",
+      "hours": 1.0,
+      "day": 5,
+      "done": false,
+      "created_order": 123
+    },
+    {
+      "id": 124,
+      "title": "Lab: network security basics (firewalls/VPN)",
+      "hours": 1.0,
+      "day": 5,
+      "done": false,
+      "created_order": 124
+    },
+    {
+      "id": 125,
+      "title": "Polish resume bullets (action/result verbs)",
+      "hours": 0.5,
+      "day": 5,
+      "done": false,
+      "created_order": 125
+    },
+    {
+      "id": 126,
+      "title": "Weekly GitHub portfolio update and commit",
+      "hours": 0.5,
+      "day": 5,
+      "done": false,
+      "created_order": 126
+    },
+    {
+      "id": 127,
+      "title": "Research Sacramento employers (health/finance/gov)",
+      "hours": 1.5,
+      "day": 6,
+      "done": false,
+      "created_order": 127
+    },
+    {
+      "id": 128,
+      "title": "Apply to 8 jobs (include compliance/GRC)",
+      "hours": 1.5,
+      "day": 6,
+      "done": false,
+      "created_order": 128
+    },
+    {
+      "id": 129,
+      "title": "Security+: Domain 4 (ops & incident response)",
+      "hours": 2.0,
+      "day": 6,
+      "done": false,
+      "created_order": 129
+    },
+    {
+      "id": 130,
+      "title": "Create GitHub repo, push README",
+      "hours": 1.0,
+      "day": 6,
+      "done": false,
+      "created_order": 130
+    },
+    {
+      "id": 131,
+      "title": "Light day: review week, tidy files",
+      "hours": 1.0,
+      "day": 7,
+      "done": false,
+      "created_order": 131
+    },
+    {
+      "id": 132,
+      "title": "Security+: 40 mixed Qs + review",
+      "hours": 2.0,
+      "day": 7,
+      "done": false,
+      "created_order": 132
+    },
+    {
+      "id": 133,
+      "title": "Optional: refine LinkedIn banner/about",
+      "hours": 0.5,
+      "day": 7,
+      "done": false,
+      "created_order": 133
+    },
+    {
+      "id": 134,
+      "title": "Rest/personal",
+      "hours": 1.0,
+      "day": 7,
+      "done": false,
+      "created_order": 134
+    },
+    {
+      "id": 135,
+      "title": "Weekly GitHub activity review and planning",
+      "hours": 0.5,
+      "day": 7,
+      "done": false,
+      "created_order": 135
+    }
+  ],
+  "version": 1
+}
