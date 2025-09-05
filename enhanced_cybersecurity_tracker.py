@@ -54,7 +54,7 @@ class EnhancedCybersecurityTracker:
         self.end_date = None
         self.total_days = DEFAULT_DAYS
         self.hours_per_day_target = 6.0
-        self.skip_weekends = True  # Default to skipping weekends
+        self.skip_days = [5, 6]  # Default to skipping weekends (Saturday=5, Sunday=6)
         self.tasks = []
         self.version = 2
         
@@ -89,7 +89,7 @@ class EnhancedCybersecurityTracker:
                     self.end_date = data.get("end_date", (datetime.now() + timedelta(days=41)).strftime("%Y-%m-%d"))
                     self.total_days = data.get("total_days", DEFAULT_DAYS)
                     self.hours_per_day_target = data.get("hours_per_day_target", 6.0)
-                    self.skip_weekends = data.get("skip_weekends", True)
+                    self.skip_days = data.get("skip_days", [5, 6])  # Default to weekends
                     
                     # Convert tasks to our format
                     self.tasks = []
@@ -240,7 +240,7 @@ class EnhancedCybersecurityTracker:
             "end_date": self.end_date,
             "total_days": self.total_days,
             "hours_per_day_target": self.hours_per_day_target,
-            "skip_weekends": self.skip_weekends,
+            "skip_days": self.skip_days,
             "version": self.version,
             "tasks": []
         }
@@ -264,15 +264,15 @@ class EnhancedCybersecurityTracker:
             json.dump(data, f, indent=2)
     
     def get_current_day(self) -> int:
-        """Calculate current day based on start date, optionally skipping weekends"""
+        """Calculate current day based on start date, skipping selected days"""
         if not self.start_date:
             return 1
         
         start = datetime.strptime(self.start_date, "%Y-%m-%d")
         current = datetime.now()
         
-        if self.skip_weekends:
-            # Calculate working days only (Monday-Friday)
+        if self.skip_days:
+            # Calculate working days only (excluding selected days)
             working_days = self.get_working_days_between(start, current)
             return min(max(working_days + 1, 1), self.total_days)
         else:
@@ -281,13 +281,13 @@ class EnhancedCybersecurityTracker:
             return min(max(days_since_start, 1), self.total_days)
     
     def get_working_days_between(self, start_date: datetime, end_date: datetime) -> int:
-        """Calculate working days between two dates (excluding weekends)"""
+        """Calculate working days between two dates (excluding selected skip days)"""
         working_days = 0
         current = start_date
         
         while current <= end_date:
             # Monday = 0, Sunday = 6
-            if current.weekday() < 5:  # Monday to Friday
+            if current.weekday() not in self.skip_days:
                 working_days += 1
             current += timedelta(days=1)
         
@@ -304,16 +304,24 @@ class EnhancedCybersecurityTracker:
         
         while day_count < working_day:
             current += timedelta(days=1)
-            if not self.skip_weekends or current.weekday() < 5:
+            if not self.skip_days or current.weekday() not in self.skip_days:
                 day_count += 1
         
         return current
     
-    def toggle_weekend_skipping(self):
-        """Toggle weekend skipping on/off"""
-        self.skip_weekends = not self.skip_weekends
+    def update_skip_days(self, skip_days: list):
+        """Update which days to skip"""
+        self.skip_days = skip_days
         self.save_state()
-        return self.skip_weekends
+    
+    def get_day_name(self, weekday: int) -> str:
+        """Get day name from weekday number (0=Monday, 6=Sunday)"""
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        return days[weekday]
+    
+    def get_skip_days_names(self) -> list:
+        """Get list of day names that are being skipped"""
+        return [self.get_day_name(day) for day in self.skip_days]
     
     def get_today_tasks(self) -> List[Task]:
         """Get all tasks for today"""
@@ -539,10 +547,21 @@ class EnhancedGUI:
         self.current_day_var = tk.StringVar()
         ttk.Label(dates_frame, textvariable=self.current_day_var, font=('Arial', 10, 'bold')).pack(side=tk.LEFT, padx=(5, 20))
         
-        # Weekend skipping toggle
-        self.weekend_skip_var = tk.BooleanVar(value=self.tracker.skip_weekends)
-        weekend_check = ttk.Checkbutton(dates_frame, text="Skip Weekends", variable=self.weekend_skip_var, command=self.toggle_weekend_skipping)
-        weekend_check.pack(side=tk.LEFT, padx=(0, 10))
+        # Day selection frame
+        day_selection_frame = ttk.Frame(dates_frame)
+        day_selection_frame.pack(side=tk.LEFT, padx=(0, 10))
+        
+        ttk.Label(day_selection_frame, text="Skip days:").pack(side=tk.LEFT, padx=(0, 5))
+        
+        # Day checkboxes
+        self.day_vars = {}
+        day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        for i, day_name in enumerate(day_names):
+            var = tk.BooleanVar(value=i in self.tracker.skip_days)
+            self.day_vars[i] = var
+            cb = ttk.Checkbutton(day_selection_frame, text=day_name, variable=var, 
+                               command=lambda d=i: self.update_day_selection(d))
+            cb.pack(side=tk.LEFT, padx=1)
         
         # Quick actions
         actions_frame = ttk.Frame(header_frame)
@@ -711,13 +730,17 @@ class EnhancedGUI:
             end = start + timedelta(days=self.tracker.total_days - 1)
             self.tracker.end_date = end.strftime("%Y-%m-%d")
     
-    def toggle_weekend_skipping(self):
-        """Toggle weekend skipping on/off"""
-        self.tracker.skip_weekends = self.weekend_skip_var.get()
-        self.tracker.save_state()
+    def update_day_selection(self, day_index):
+        """Update which days to skip based on checkbox selection"""
+        skip_days = [i for i, var in self.day_vars.items() if var.get()]
+        self.tracker.update_skip_days(skip_days)
         self.refresh_display()
-        status = "enabled" if self.tracker.skip_weekends else "disabled"
-        messagebox.showinfo("Weekend Skipping", f"Weekend skipping {status}. Current day recalculated.")
+        
+        if skip_days:
+            skip_names = [self.tracker.get_day_name(day) for day in skip_days]
+            messagebox.showinfo("Day Selection", f"Now skipping: {', '.join(skip_names)}")
+        else:
+            messagebox.showinfo("Day Selection", "No days selected for skipping - working all days")
     
     def update_week_buttons(self):
         """Update week navigation buttons based on plan duration"""
@@ -755,8 +778,11 @@ class EnhancedGUI:
         self.end_date_var.set(self.tracker.end_date or "Not set")
         self.duration_var.set(str(self.tracker.total_days))
         current_day = self.tracker.get_current_day()
-        weekend_info = " (weekends skipped)" if self.tracker.skip_weekends else ""
-        self.current_day_var.set(f"{current_day}/{self.tracker.total_days}{weekend_info}")
+        skip_info = ""
+        if self.tracker.skip_days:
+            skip_names = self.tracker.get_skip_days_names()
+            skip_info = f" (skipping: {', '.join(skip_names)})"
+        self.current_day_var.set(f"{current_day}/{self.tracker.total_days}{skip_info}")
         
         # Update progress
         summary = self.tracker.get_progress_summary()
