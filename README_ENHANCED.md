@@ -118,7 +118,7 @@ The enhanced version automatically categorizes all 290 tasks:
 ## 📁 File Structure
 
 ```
-cybersecurity-job-tracker/
+career-development-tracker/
 ├── enhanced_cybersecurity_tracker.py    # Main enhanced application
 ├── cybersecurity_job_plan.py            # Original CLI version
 ├── run_enhanced_tracker.bat             # Windows launcher

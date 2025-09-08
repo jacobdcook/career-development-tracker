@@ -25,8 +25,8 @@ A comprehensive desktop application for managing structured schedules and career
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/cybersecurity-job-tracker.git
-cd cybersecurity-job-tracker
+git clone https://github.com/jacobdcook/career-development-tracker.git
+cd career-development-tracker
 
 # Run the application
 python enhanced_cybersecurity_tracker.py
