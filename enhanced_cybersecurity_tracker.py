@@ -268,8 +268,12 @@ class EnhancedCybersecurityTracker:
         if not self.start_date:
             return 1
         
-        start = datetime.strptime(self.start_date, "%Y-%m-%d")
-        current = datetime.now()
+        start = datetime.strptime(self.start_date, "%Y-%m-%d").date()
+        current = datetime.now().date()
+        
+        # If we're on the start date, we're on day 1
+        if current <= start:
+            return 1
         
         if self.skip_days:
             # Calculate working days only (excluding selected days)
@@ -280,7 +284,7 @@ class EnhancedCybersecurityTracker:
             days_since_start = (current - start).days + 1
             return min(max(days_since_start, 1), self.total_days)
     
-    def get_working_days_between(self, start_date: datetime, end_date: datetime) -> int:
+    def get_working_days_between(self, start_date, end_date) -> int:
         """Calculate working days between two dates (excluding selected skip days)"""
         working_days = 0
         current = start_date
