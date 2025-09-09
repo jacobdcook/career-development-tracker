@@ -132,6 +132,10 @@ releases/*/dist/
 releases/*/__pycache__/
 releases/*/*.pyc
 
+# Personal files
+resume.html
+resume.md
+
 # OS
 .DS_Store
 .DS_Store?

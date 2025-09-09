@@ -1,6 +1,6 @@
 # Career Development Plan Tracker
 
-A comprehensive desktop application for managing structured schedules and career development plans. Supports any field with customizable templates and AI-generated plans - perfect for job search, learning new skills, or achieving any goal.
+A comprehensive desktop application for managing structured schedules and career development plans. Supports any field with customizable templates and detailed planning guides - perfect for job search, learning new skills, or achieving any goal.
 
 ![Python](https://img.shields.io/badge/python-3.7+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -9,7 +9,7 @@ A comprehensive desktop application for managing structured schedules and career
 ## Features
 
 - **Customizable Plans** - Support for any field (cybersecurity, data science, web dev, etc.)
-- **AI-Generated Plans** - Use provided prompts to generate personalized plans
+- **Custom Plan Generation** - Use provided templates to create personalized plans
 - **Modern GUI** - Beautiful interface with progress visualization
 - **Advanced Filtering** - Filter by category, status, or search terms
 - **Progress Tracking** - Visual progress bars and detailed reports

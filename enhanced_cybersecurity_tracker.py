@@ -139,6 +139,18 @@ class EnhancedCybersecurityTracker:
         else:
             return "General"
     
+    def get_behind_schedule_tasks(self) -> List['Task']:
+        """Get tasks that should have been completed by now based on current day"""
+        current_day = self.get_current_day()
+        behind_tasks = []
+        
+        for task in self.tasks:
+            # If task is for a day that has already passed and not completed
+            if task.day < current_day and not task.done:
+                behind_tasks.append(task)
+        
+        return behind_tasks
+    
     def create_from_template(self):
         """Create a plan from the template"""
         template_path = "sample_schedule_template.json"
@@ -166,7 +178,7 @@ class EnhancedCybersecurityTracker:
                         done=task_data["done"],
                         created_order=task_id,
                         status=TaskStatus.PENDING,
-                        category=task_data.get("category", "General")
+                        category=task_data.get("category", self._categorize_task(task_data["title"]))
                     )
                     self.tasks.append(task)
                     task_id += 1
@@ -217,7 +229,7 @@ class EnhancedCybersecurityTracker:
                     status=TaskStatus(task_data.get("status", "pending")),
                     notes=task_data.get("notes", ""),
                     completed_date=task_data.get("completed_date"),
-                    category=task_data.get("category", "")
+                    category=task_data.get("category", self._categorize_task(task_data["title"]))
                 )
                 self.tasks.append(task)
             
@@ -488,7 +500,7 @@ class EnhancedGUI:
     def setup_ui(self):
         """Setup the main GUI"""
         self.root.title("🔐 Enhanced Cybersecurity Job Search Tracker")
-        self.root.geometry("1200x800")
+        self.root.geometry("1200x900")  # Increased height to show all buttons
         self.root.configure(bg='#f0f0f0')
         
         # Configure style
@@ -514,6 +526,9 @@ class EnhancedGUI:
         
         # Right panel - Task list
         self.create_right_panel(content_frame)
+        
+        # Task actions above status bar
+        self.create_task_actions(main_frame)
         
         # Status bar
         self.create_status_bar(main_frame)
@@ -551,9 +566,12 @@ class EnhancedGUI:
         self.current_day_var = tk.StringVar()
         ttk.Label(dates_frame, textvariable=self.current_day_var, font=('Arial', 10, 'bold')).pack(side=tk.LEFT, padx=(5, 20))
         
-        # Day selection frame
-        day_selection_frame = ttk.Frame(dates_frame)
-        day_selection_frame.pack(side=tk.LEFT, padx=(0, 10))
+        # Export button next to current day
+        ttk.Button(dates_frame, text="📤 Export Data", command=self.export_data).pack(side=tk.LEFT, padx=5)
+        
+        # Day selection frame below the main dates
+        day_selection_frame = ttk.Frame(header_frame)
+        day_selection_frame.pack(fill=tk.X, pady=(10, 0))
         
         ttk.Label(day_selection_frame, text="Skip days:").pack(side=tk.LEFT, padx=(0, 5))
         
@@ -574,7 +592,6 @@ class EnhancedGUI:
         ttk.Button(actions_frame, text="📅 Today's Tasks", command=self.show_today).pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(actions_frame, text="📊 Progress Report", command=self.show_progress_report).pack(side=tk.LEFT, padx=5)
         ttk.Button(actions_frame, text="💾 Backup Data", command=self.backup_data).pack(side=tk.LEFT, padx=5)
-        ttk.Button(actions_frame, text="📤 Export Data", command=self.export_data).pack(side=tk.LEFT, padx=5)
     
     def create_progress_section(self, parent):
         """Create progress visualization section"""
@@ -620,11 +637,18 @@ class EnhancedGUI:
         category_frame.pack(fill=tk.X, pady=(0, 10))
         
         self.category_var = tk.StringVar(value="All")
-        categories = ["All"] + list(set(task.category for task in self.tracker.tasks))
+        categories = ["All", "Behind Schedule"] + list(set(task.category for task in self.tracker.tasks))
         
         for category in categories:
-            ttk.Radiobutton(category_frame, text=category, variable=self.category_var, 
-                           value=category, command=self.filter_tasks).pack(anchor=tk.W)
+            if category == "Behind Schedule":
+                # Add special styling for behind schedule
+                behind_count = len(self.tracker.get_behind_schedule_tasks())
+                text = f"🚨 Behind Schedule ({behind_count})" if behind_count > 0 else "Behind Schedule (0)"
+                ttk.Radiobutton(category_frame, text=text, variable=self.category_var, 
+                               value=category, command=self.filter_tasks).pack(anchor=tk.W)
+            else:
+                ttk.Radiobutton(category_frame, text=category, variable=self.category_var, 
+                               value=category, command=self.filter_tasks).pack(anchor=tk.W)
         
         # Status filters
         status_frame = ttk.LabelFrame(left_frame, text="📊 Status", padding=5)
@@ -684,17 +708,18 @@ class EnhancedGUI:
         self.task_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        # Task actions
-        actions_frame = ttk.Frame(right_frame)
+        # Bind double-click
+        self.task_tree.bind("<Double-1>", lambda e: self.toggle_status())
+    
+    def create_task_actions(self, parent):
+        """Create task action buttons above status bar"""
+        actions_frame = ttk.Frame(parent)
         actions_frame.pack(fill=tk.X, pady=(10, 0))
         
         ttk.Button(actions_frame, text="✅ Mark Complete", command=self.mark_complete).pack(side=tk.LEFT, padx=(0, 5))
         ttk.Button(actions_frame, text="🔄 Mark In Progress", command=self.mark_in_progress).pack(side=tk.LEFT, padx=5)
         ttk.Button(actions_frame, text="📝 Add Notes", command=self.add_notes).pack(side=tk.LEFT, padx=5)
         ttk.Button(actions_frame, text="🔄 Toggle Status", command=self.toggle_status).pack(side=tk.LEFT, padx=5)
-        
-        # Bind double-click
-        self.task_tree.bind("<Double-1>", lambda e: self.toggle_status())
     
     def create_status_bar(self, parent):
         """Create status bar"""
@@ -820,11 +845,20 @@ class EnhancedGUI:
         
         # Filter tasks
         filtered_tasks = []
-        for task in self.tracker.tasks:
-            # Category filter
-            if category_filter != "All" and task.category != category_filter:
-                continue
-            
+        
+        # Handle "Behind Schedule" category specially
+        if category_filter == "Behind Schedule":
+            filtered_tasks = self.tracker.get_behind_schedule_tasks()
+        else:
+            for task in self.tracker.tasks:
+                # Category filter
+                if category_filter != "All" and task.category != category_filter:
+                    continue
+                filtered_tasks.append(task)
+        
+        # Apply status and search filters to all filtered tasks
+        final_filtered_tasks = []
+        for task in filtered_tasks:
             # Status filter
             if status_filter != "All":
                 if status_filter == "Pending" and task.status != TaskStatus.PENDING:
@@ -838,7 +872,9 @@ class EnhancedGUI:
             if search_term and search_term not in task.title.lower():
                 continue
             
-            filtered_tasks.append(task)
+            final_filtered_tasks.append(task)
+        
+        filtered_tasks = final_filtered_tasks
         
         # Sort by day, then by created order
         filtered_tasks.sort(key=lambda t: (t.day, t.created_order))
