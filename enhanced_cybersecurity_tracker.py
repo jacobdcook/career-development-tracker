@@ -583,7 +583,11 @@ class EnhancedGUI:
         
         ttk.Label(dates_frame, text="End Date:").pack(side=tk.LEFT)
         self.end_date_var = tk.StringVar(value=self.tracker.end_date or "Not set")
-        ttk.Label(dates_frame, textvariable=self.end_date_var, font=('Arial', 10, 'bold')).pack(side=tk.LEFT, padx=(5, 20))
+        end_date_label = ttk.Label(dates_frame, textvariable=self.end_date_var, font=('Arial', 10, 'bold'))
+        end_date_label.pack(side=tk.LEFT, padx=(5, 5))
+        end_date_label.bind("<Button-1>", self.pick_end_date)
+        
+        ttk.Button(dates_frame, text="📅", command=self.pick_end_date, width=3).pack(side=tk.LEFT, padx=(0, 20))
         
         ttk.Label(dates_frame, text="Current Day:").pack(side=tk.LEFT)
         self.current_day_var = tk.StringVar()
@@ -759,6 +763,15 @@ class EnhancedGUI:
             self.tracker.save_state()
             self.refresh_display()
     
+    def pick_end_date(self, event=None):
+        """Open calendar picker for end date"""
+        dialog = DatePickerDialog(self.root, "Select End Date", self.tracker.end_date)
+        if dialog.result:
+            self.tracker.end_date = dialog.result
+            self.update_duration_from_dates()
+            self.tracker.save_state()
+            self.refresh_display()
+    
     def update_duration(self, event=None):
         """Update plan duration"""
         try:
@@ -782,17 +795,37 @@ class EnhancedGUI:
             end = start + timedelta(days=self.tracker.total_days - 1)
             self.tracker.end_date = end.strftime("%Y-%m-%d")
     
+    def update_duration_from_dates(self):
+        """Update duration based on start and end dates"""
+        if self.tracker.start_date and self.tracker.end_date:
+            start = datetime.strptime(self.tracker.start_date, "%Y-%m-%d")
+            end = datetime.strptime(self.tracker.end_date, "%Y-%m-%d")
+            
+            # Calculate total days including both start and end dates
+            total_days = (end - start).days + 1
+            
+            if total_days >= 1:
+                self.tracker.total_days = total_days
+                self.duration_var.set(str(total_days))
+            else:
+                messagebox.showerror("Invalid Date Range", "End date must be after start date")
+                # Reset to previous end date
+                self.update_end_date()
+    
     def update_day_selection(self, day_index):
         """Update which days to skip based on checkbox selection"""
         skip_days = [i for i, var in self.day_vars.items() if var.get()]
         self.tracker.update_skip_days(skip_days)
         self.refresh_display()
         
-        if skip_days:
-            skip_names = [self.tracker.get_day_name(day) for day in skip_days]
-            messagebox.showinfo("Day Selection", f"Now skipping: {', '.join(skip_names)}")
+        # Get the day name for the specific day that was just changed
+        day_name = self.tracker.get_day_name(day_index)
+        is_checked = self.day_vars[day_index].get()
+        
+        if is_checked:
+            messagebox.showinfo("Day Selection", f"Now skipping {day_name}")
         else:
-            messagebox.showinfo("Day Selection", "No days selected for skipping - working all days")
+            messagebox.showinfo("Day Selection", f"Now doing {day_name}")
     
     def update_week_buttons(self):
         """Update week navigation buttons based on plan duration"""
