@@ -59,8 +59,9 @@ class EnhancedCybersecurityTracker:
         self.version = 2
         
         # Load existing data or create from template
-        if not self.load_state():
-            self.load_from_template_or_data()
+        # Always try to load from user data first, then fall back to state file
+        if not self.load_from_template_or_data():
+            self.load_state()
     
     def ensure_backup_dir(self):
         """Create backup directory if it doesn't exist"""
@@ -102,12 +103,14 @@ class EnhancedCybersecurityTracker:
                             done=task_data["done"],
                             created_order=task_data["created_order"],
                             status=TaskStatus.COMPLETED if task_data["done"] else TaskStatus.PENDING,
-                            category=self._categorize_task(task_data["title"])
+                            category=task_data.get("category", self._categorize_task(task_data["title"]))
                         )
                         self.tasks.append(task)
                     
                     self.save_state()
                     print(f"✅ Loaded {len(self.tasks)} tasks from {data_file}!")
+                    print(f"📊 Categories found: {set(task.category for task in self.tasks)}")
+                    print(f"📅 Current day: {self.get_current_day()}")
                     return
                     
                 except Exception as e:
@@ -244,6 +247,13 @@ class EnhancedCybersecurityTracker:
         if os.path.exists(self.state_file):
             backup_name = f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
             backup_path = os.path.join(self.backup_dir, backup_name)
+            # Check if backup file already exists and add a counter if needed
+            counter = 1
+            original_backup_path = backup_path
+            while os.path.exists(backup_path):
+                backup_name = f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{counter}.json"
+                backup_path = os.path.join(self.backup_dir, backup_name)
+                counter += 1
             os.rename(self.state_file, backup_path)
         
         # Save current state
@@ -272,7 +282,12 @@ class EnhancedCybersecurityTracker:
             }
             data["tasks"].append(task_data)
         
+        # Save to both state file AND my_schedule.json to keep them in sync
         with open(self.state_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2)
+        
+        # Also save to my_schedule.json to preserve progress
+        with open("my_schedule.json", 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2)
     
     def get_current_day(self) -> int:
@@ -502,6 +517,14 @@ class EnhancedGUI:
         self.root.title("🔐 Enhanced Cybersecurity Job Search Tracker")
         self.root.geometry("1200x900")  # Increased height to show all buttons
         self.root.configure(bg='#f0f0f0')
+        
+        # Set application icon
+        try:
+            self.root.iconbitmap("cybersecurity_tracker_icon.ico")
+            print("✅ Icon loaded successfully")
+        except Exception as e:
+            print(f"❌ Icon loading failed: {e}")
+            pass  # If icon file doesn't exist, just continue without it
         
         # Configure style
         style = ttk.Style()
